@@ -9,6 +9,7 @@ import { ThemeProvider } from "@/components/providers/theme-provider";
 import { cn } from "@/lib/utils";
 import { ClerkProvider } from "@clerk/nextjs";
 import { SocketProvider } from "@/components/providers/socket-provider";
+import { QueryProvider } from "@/components/providers/query-provider";
 
 export const metadata: Metadata = {
   title: "Talk Wave",
@@ -32,7 +33,7 @@ export default function RootLayout({
           >
             <SocketProvider>
               <ModalProvider />
-              {children}
+              <QueryProvider>{children}</QueryProvider>
             </SocketProvider>
           </ThemeProvider>
         </body>
