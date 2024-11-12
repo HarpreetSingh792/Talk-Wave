@@ -1,10 +1,8 @@
 import { currentProfile } from "@/lib/current-profile";
 import { db } from "@/lib/db";
-import { MemberRole } from "@prisma/client";
-
 import { NextResponse } from "next/server";
 
-export async function DELETE(
+export async function GET(
   req: Request,
   {
     params,
@@ -33,38 +31,18 @@ export async function DELETE(
       return new NextResponse("Missing Channel ID ", { status: 400 });
     }
 
-    const server = await db.server.update({
+    const channel = await db.slate.findFirst({
       where: {
-        id: serverId,
-        members: {
-          some: {
-            profileId: profile?.id,
-            role: {
-              in: [MemberRole.ADMIN, MemberRole.MODERATOR],
-            },
-          },
-        },
-      },
-      data: {
-        channels: {
-          delete: {
-            id: params.channelId,
-            name: {
-              not: "general",
-            },
-          },
-        },
+        channelId: params.channelId,
       },
     });
-
-    return NextResponse.json(server);
+    return NextResponse.json(channel);
   } catch (error) {
-    console.log("[CHANNELS_DELETED_ERROR", error);
+    console.log("[SLATE_DATA_ERROR", error);
     return new NextResponse("Internal Server Error", { status: 500 });
   }
 }
-
-export async function PATCH(
+export async function POST(
   req: Request,
   {
     params,
@@ -75,13 +53,13 @@ export async function PATCH(
   }
 ) {
   try {
+    const { canvasData, canvasFile } = await req.json();
+
     const profile = await currentProfile();
 
     const { searchParams } = new URL(req.url);
 
     const serverId = searchParams.get("serverId");
-
-    const { name, type } = await req.json();
 
     if (!profile) {
       return new NextResponse("Unauthorised", { status: 401 });
@@ -95,45 +73,36 @@ export async function PATCH(
       return new NextResponse("Missing Channel ID ", { status: 400 });
     }
 
-    if (name === "general") {
-      return new NextResponse("Name can't be 'general", { status: 400 });
-    }
-
-    const server = await db.server.update({
+    let slate = await db.slate.findFirst({
       where: {
-        id: serverId,
-        members: {
-          some: {
-            profileId: profile?.id,
-            role: {
-              in: [MemberRole.ADMIN, MemberRole.MODERATOR],
-            },
-          },
-        },
-      },
-      data: {
-        channels: {
-          update: {
-            where: {
-              id: params?.channelId,
-              NOT: {
-                name: "general",
-              },
-            },
-            data: {
-              name,
-              type,
-            },
-          },
-        },
+        channelId: params.channelId,
       },
     });
 
-    return NextResponse.json(server);
+    if (!slate) {
+      slate = await db.slate.create({
+        data: {
+          channelId: params.channelId,
+          canvasData,
+          canvasFile,
+        },
+      });
+    } else {
+      slate = await db.slate.update({
+        where: {
+          channelId: params.channelId,
+          id: slate.id,
+        },
+        data: {
+          canvasData,
+          canvasFile,
+        },
+      });
+    }
+
+    return NextResponse.json(slate);
   } catch (error) {
-    console.log("[CHANNEL_ID_PATCH", error);
+    console.log("[SLATE_CREATION_ERROR", error);
     return new NextResponse("Internal Server Error", { status: 500 });
   }
 }
-
-

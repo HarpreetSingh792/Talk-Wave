@@ -2,6 +2,7 @@ import { ChatMessages } from "@/components/chat-messages";
 import ChatHeader from "@/components/chat/chat-header";
 import { ChatInput } from "@/components/chat/chat-input";
 import { MediaRoom } from "@/components/media-room";
+import Slate from "@/components/slate/slate";
 import { currentProfile } from "@/lib/current-profile";
 import { db } from "@/lib/db";
 import { redirectToSignIn } from "@clerk/nextjs/server";
@@ -83,6 +84,8 @@ export const ChannelIDPage = async ({ params }: ChannelIDPageProps) => {
       {channel.type === ChannelType.VIDEO && (
         <MediaRoom chatId={channel.id} video={true} audio={true} />
       )}
+
+      {channel.type === ChannelType.SLATE && <Slate />}
     </div>
   );
 };

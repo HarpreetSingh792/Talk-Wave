@@ -58,7 +58,7 @@ export const ChatItem = ({
   const { onOpen } = useModal();
 
   const [isEditing, setIsEditing] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
+  // const [isDeleting, setIsDeleting] = useState(false);
 
   const params = useParams();
   const router = useRouter();

@@ -4,7 +4,7 @@ import ActionTooltip from "@/components/action-tooltip";
 import { ModalType, useModal } from "@/hooks/use-modal-store";
 import { cn } from "@/lib/utils";
 import { Channel, ChannelType, MemberRole, Server } from "@prisma/client";
-import { Edit, Hash, Lock, Mic, Trash, Video } from "lucide-react";
+import { Edit, Hash, Lock, Mic, PenLine, Trash, Video } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 
 interface ServerChannelProps {
@@ -13,10 +13,12 @@ interface ServerChannelProps {
   role?: MemberRole;
 }
 
+
 const iconMap = {
   [ChannelType.TEXT]: Hash,
   [ChannelType.AUDIO]: Mic,
   [ChannelType.VIDEO]: Video,
+  [ChannelType.SLATE]: PenLine
 };
 
 export const ServerChannel = ({
@@ -72,7 +74,7 @@ export const ServerChannel = ({
         </div>
       )}
       {channel.name === "general" && (
-        <Lock className="ml-auto w-4 h-4 text-zinc-500 dark:text-zonc-400" />
+        <Lock className="ml-auto w-4 h-4 text-zinc-500 dark:text-zinc-400" />
       )}
     </button>
   );

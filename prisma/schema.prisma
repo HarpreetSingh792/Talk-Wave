@@ -67,6 +67,7 @@ enum ChannelType {
   TEXT
   AUDIO
   VIDEO
+  SLATE
 }
 
 model Channel {
@@ -80,6 +81,7 @@ model Channel {
   serverId String
   server   Server @relation(fields: [serverId], references: [id], onDelete: Cascade)
 
+  slate Slate[]
   messages Message[]
 
   createdAt DateTime @default(now())
@@ -142,4 +144,17 @@ model DirectMessage{
 
   @@index([memberId])
   @@index([conversationId])
+}
+
+
+model Slate {
+  id       String  @id @default(uuid())
+  canvasData  Json
+  canvasFile  Json? 
+  channelId String
+  channel   Channel  @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([channelId])
+
 }

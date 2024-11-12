@@ -2,7 +2,14 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { currentProfile } from "@/lib/current-profile";
 import { db } from "@/lib/db";
 import { ChannelType, MemberRole } from "@prisma/client";
-import { Hash, Mic, ShieldAlert, ShieldCheck, Video } from "lucide-react";
+import {
+  Hash,
+  Mic,
+  PenLine,
+  ShieldAlert,
+  ShieldCheck,
+  Video,
+} from "lucide-react";
 import { redirect } from "next/navigation";
 import ServerHeader from "./server-header";
 import { ServerSearch } from "./server-search";
@@ -20,6 +27,7 @@ const iconMap = {
   [ChannelType.TEXT]: <Hash className="mr-2 h-4 w-4" />,
   [ChannelType.AUDIO]: <Mic className="mr-2 h-4 w-4" />,
   [ChannelType.VIDEO]: <Video className="mr-2 h-4 w-4" />,
+  [ChannelType.SLATE]: <PenLine className="mr-2 h-4 w-4" />,
 };
 
 const roleIconMap = {
@@ -72,6 +80,10 @@ const ServerSidebar = async ({ serverId }: ServerSidebarProps) => {
     (channel) => channel.type === ChannelType.VIDEO
   );
 
+  const slateChannels = server?.channels.filter(
+    (channel) => channel.type === ChannelType.SLATE
+  );
+
   const members = server?.members.filter(
     (member) => member.profileId !== profile.id
   );
@@ -108,6 +120,15 @@ const ServerSidebar = async ({ serverId }: ServerSidebarProps) => {
                 label: "Video Channel",
                 type: "channel",
                 data: videoChannels?.map((channel) => ({
+                  id: channel.id,
+                  name: channel.name,
+                  icon: iconMap[channel.type],
+                })),
+              },
+              {
+                label: "Visualization Channel",
+                type: "channel",
+                data: slateChannels?.map((channel) => ({
                   id: channel.id,
                   name: channel.name,
                   icon: iconMap[channel.type],
@@ -191,6 +212,29 @@ const ServerSidebar = async ({ serverId }: ServerSidebarProps) => {
             </div>
           </div>
         )}
+
+        {/* Visualization... */}
+        {!!slateChannels?.length && (
+          <div className="mb-2">
+            <ServerSection
+              sectionType="channels"
+              channelType={ChannelType.SLATE}
+              role={role}
+              label="Visualisation Channels"
+            />
+            <div className="space-y-[2px]">
+              {slateChannels.map((channel) => (
+                <ServerChannel
+                  key={channel.id}
+                  channel={channel}
+                  role={role}
+                  server={server}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Members */}
         {!!members?.length && (
           <div className="mb-2">

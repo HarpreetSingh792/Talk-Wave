@@ -2,6 +2,26 @@
 @tailwind components;
 @tailwind utilities;
 
+
+
+.tldraw-light {
+  --tl-background: #ffffff;
+  --tl-color: #000000;
+  --tl-border-color: #d3d3d3;
+  --tl-accent-color: #0066ff;
+  /* Add other variable overrides as needed for light mode */
+}
+
+.tldraw-dark {
+  --tl-background: #1e1e1e;
+  --tl-color: #ffffff;
+  --tl-border-color: #555555;
+  --tl-accent-color: #0099ff;
+
+}
+
+
+
 @layer base {
   :root {
     --background: 0 0% 100%;
