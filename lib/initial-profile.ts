@@ -1,7 +1,6 @@
 import { currentUser, redirectToSignIn } from "@clerk/nextjs/server";
 
 import { db } from "@/lib/db";
-import { NextResponse } from "next/server";
 
 export const initialProfile = async ():Promise<any| {
   id: string;
